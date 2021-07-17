@@ -31,7 +31,7 @@ public class AutoHealthReportAccountController {
         Account account = new Account(accountId, password, realName, "UNVALIDATED");
         accountDao.insert(account);
         return String.format("注册成功。请等待服务器自动完成账号验证。\n" +
-                "可以通过 https://116.63.240.166:12345/autoHealthReport/account?accountId=%d 检查该账号状态。\n" +
+                "可以通过 https://116.63.240.166:12345/autoHealthReport/account?accountId=%s 检查该账号状态。\n" +
                 "通常情况下每个账号需要一分钟完成验证。请关注验证是否通过。若未通过，请检查提交的参数并重试注册。",accountId);
     }
 
