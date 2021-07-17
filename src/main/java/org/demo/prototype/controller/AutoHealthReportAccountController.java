@@ -26,7 +26,7 @@ public class AutoHealthReportAccountController {
             return "错误：请把链接中的 '【学号】、【统一身份认证密码】、【真实姓名完整汉字】' 替换成你的真实信息，例如 http://116.63.240.166:12345/autoHealthReport/account/register?accountId=35320181234567&password=1234567&realName=张三";
         }
         if (accountDao.selectAccountById(accountId) != null) {
-            return String.format("注册失败：数据库中已存在该账号，请勿重复提交。可以通过 https://116.63.240.166:12345/autoHealthReport/account?accountId=%d 检查该账号状态。",accountId);
+            return String.format("注册失败：数据库中已存在该账号，请勿重复提交。可以通过 https://116.63.240.166:12345/autoHealthReport/account?accountId=%s 检查该账号状态。",accountId);
         }
         Account account = new Account(accountId, password, realName, "UNVALIDATED");
         accountDao.insert(account);
