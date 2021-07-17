@@ -183,7 +183,7 @@ public class Account {
         try{
             System.out.println("【检查账号是否真实有效】");
 
-            // 登录 -------------------------------------------- TODO：对于错误密码的处理
+            // 登录 --------------------------------------------
             driver.get("https://ids.xmu.edu.cn/authserver/login?service=https://xmuxg.xmu.edu.cn/login/cas/xmu");
             Thread.sleep(3000);
             driver.manage().window().setSize(new Dimension(1280, 720));
