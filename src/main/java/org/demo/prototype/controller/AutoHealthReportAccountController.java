@@ -20,26 +20,28 @@ public class AutoHealthReportAccountController {
 
     @GetMapping("/account/register")
     public Object register(@RequestParam("accountId") String accountId,
-            @RequestParam("password") String password,
-            @RequestParam("realName") String realName) {
-        if(accountId.equals("【学号】")){
-            return "Erro: Please replace sample params with your own account info.";
+                           @RequestParam("password") String password,
+                           @RequestParam("realName") String realName) {
+        if (accountId.equals("【学号】")) {
+            return "错误：请把链接中的 '【学号】、【统一身份认证密码】、【真实姓名完整汉字】' 替换成你的真实信息，例如 http://116.63.240.166:12345/autoHealthReport/account/register?accountId=35320181234567&password=1234567&realName=张三";
         }
-        if(accountDao.selectAccountById(accountId)!=null){
-            return "Failed to register: Duplicate accountId";
+        if (accountDao.selectAccountById(accountId) != null) {
+            return String.format("注册失败：数据库中已存在该账号，请勿重复提交。可以通过 https://116.63.240.166:12345/autoHealthReport/account?accountId=%d 检查该账号状态。",accountId);
         }
         Account account = new Account(accountId, password, realName, "UNVALIDATED");
         accountDao.insert(account);
-        return "Register Success. Waiting for server to validate your account. This process would take several minutes.";
+        return String.format("注册成功。请等待服务器自动完成账号验证。\n" +
+                "可以通过 https://116.63.240.166:12345/autoHealthReport/account?accountId=%d 检查该账号状态。\n" +
+                "通常情况下每个账号需要一分钟完成验证。请关注验证是否通过。若未通过，请检查提交的参数并重试注册。",accountId);
     }
 
     @GetMapping("/account/disable")
-    public Object disable(@RequestParam("accountId") String accountId, @RequestParam("adminToken")String adminToken) {
-        if(adminToken.hashCode()!=-287814169){
+    public Object disable(@RequestParam("accountId") String accountId, @RequestParam("adminToken") String adminToken) {
+        if (adminToken.hashCode() != -287814169) {
             return "Forbidden: Invalid AdminToken.";
         }
         Account account = accountDao.selectAccountById(accountId);
-        if(account==null){
+        if (account == null) {
             return "Account not exist: invalid AccountId.";
         }
         accountDao.updateAccountStatusToDisabled(accountId);
@@ -49,7 +51,7 @@ public class AutoHealthReportAccountController {
     @GetMapping("/account/enable")
     public Object enable(@RequestParam("accountId") String accountId) {
         Account account = accountDao.selectAccountById(accountId);
-        if(account==null){
+        if (account == null) {
             return "Account not exist: invalid AccountId.";
         }
         accountDao.updateAccountStatusToAutoReporting(accountId);
@@ -58,25 +60,30 @@ public class AutoHealthReportAccountController {
 
     @GetMapping("/account")
     public Object checkInfo(@RequestParam(value = "accountId", required = false) String accountId) {
-        if(accountId!=null){        // display single
-            Account account = accountDao.selectAccountById(accountId);
-            if(account==null){
-                return "Account not exist: invalid AccountId.";
-            } else {
-                return processPrivacyFields(account);
-            }
-        } else {    // display all
+        if(accountId!=null&&accountId.equals("【学号】")){
+            return "错误：请把链接中的 '【学号】' 替换成真实的学号数字，例如 http://116.63.240.166:12345/autoHealthReport/account?accountId=35320181234567。";
+        }
+        if (accountId == null) {        // display all
             List<Account> accountList = accountDao.selectAllAccounts();
             List<Account> processedAccountList = new ArrayList<>();
             accountList.forEach(account -> processedAccountList.add(processPrivacyFields(account)));
             return processedAccountList;
+        } else {        // display all
+            Account account = accountDao.selectAccountById(accountId);
+            if (account == null) {
+                return "错误：传入的 accountId 无效。请检查是否输入了正确的学号。";
+            } else {
+                return processPrivacyFields(account);
+            }
         }
     }
 
-    public Account processPrivacyFields(Account account){
-        account.setRealName(account.getRealName().substring(0,1)+"*******");
-        account.setPassword("HIDDEN");
-        account.setAccountId(account.getAccountId().substring(0,3)+"********"+account.getAccountId().substring(11,13));
+    public Account processPrivacyFields(Account account) {
+        char[] chars = account.getRealName().toCharArray();
+        chars[1] = '*';
+        account.setRealName(String.valueOf(chars));
+        account.setPassword("*******");
+        account.setAccountId(account.getAccountId().substring(0, 3) + "********" + account.getAccountId().substring(11, 14));
         return account;
     }
 
