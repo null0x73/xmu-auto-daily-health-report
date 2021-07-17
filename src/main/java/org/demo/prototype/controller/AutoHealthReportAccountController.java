@@ -80,7 +80,10 @@ public class AutoHealthReportAccountController {
 
     public Account processPrivacyFields(Account account) {
         char[] chars = account.getRealName().toCharArray();
-        chars[1] = '*';
+        chars[0] = '*';
+        if(chars.length>2){
+            chars[1] = '*';
+        };
         account.setRealName(String.valueOf(chars));
         account.setPassword("*******");
         account.setAccountId(account.getAccountId().substring(0, 3) + "********" + account.getAccountId().substring(11, 14));
