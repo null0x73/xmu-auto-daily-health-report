@@ -22,6 +22,9 @@ public class AutoHealthReportAccountController {
     public Object register(@RequestParam("accountId") String accountId,
             @RequestParam("password") String password,
             @RequestParam("realName") String realName) {
+        if(accountId.equals("【学号】")){
+            return "Erro: Please replace sample params with your own account info.";
+        }
         if(accountDao.selectAccountById(accountId)!=null){
             return "Failed to register: Duplicate accountId";
         }

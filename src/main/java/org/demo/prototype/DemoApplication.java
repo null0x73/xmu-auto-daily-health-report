@@ -30,8 +30,6 @@ public class DemoApplication implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        System.out.println("FuckHealthReport".hashCode());
-        Thread.sleep(10000);
         System.setProperty("webdriver.chrome.driver", "C:\\dev\\software\\chromedriver\\chromedriver.exe");
         ((new Thread(new Runnable() {
             @SneakyThrows
@@ -63,7 +61,6 @@ public class DemoApplication implements ApplicationRunner {
                 }
             }
         }))).start();
-        System.out.println("HASHCODE = "+"Huaji2333".hashCode());
     }
 
 }
