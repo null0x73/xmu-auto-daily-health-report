@@ -1,0 +1,18 @@
+
+server:
+  port: 12345
+
+
+# TODO: 实际使用时，应修改数据库的 URL、用户名、密码、库名。
+
+spring:
+  datasource:
+    url: jdbc:sqlite:C:\dev\database\sqlite\AutoHealthReport.db
+    driver-class-name: org.sqlite.JDBC
+    username: root
+    password: 123456
+
+
+mybatis:
+  mapper-locations: classpath:mybatis/mapper/*Mapper.xml
+  type-aliases-package: org.demo.project.model
