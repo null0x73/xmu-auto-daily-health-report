@@ -38,22 +38,8 @@ application port = 12345
 http://116.63.240.166:12345/autoHealthReport/account/register?accountId=【学号】&password=【统一身份认证密码】&realName=【真实姓名完整汉字】
 注意：realName 参数请务必正确填写简体中文全名。注册流程会进行校验，学号、密码、真实姓名任意一项不符合的提交都会被删除。
 
-##### 查看数据库中所有已登记的账号信息（敏感字段已处理）：
-http://116.63.240.166:12345/autoHealthReport/account
-
 ##### 传入 accountId，查询对应账户状态
 http://116.63.240.166:12345/autoHealthReport/account?accountId=【学号】
-
-##### 传入 accountId, 停用该账户自动打卡
-http://116.63.240.166:12345/autoHealthReport/account/disable?accountId=【学号】&adminToken=【管理员Token】
-
-注意：该接口只允许持有有效 adminToken 的管理员操作。普通用户请勿尝试暴力破解或操作他人账户。
-
-##### 传入 accountId，取消停用并恢复自动打卡
-http://116.63.240.166:12345/autoHealthReport/account/enable?accountId=【学号】
-
-
-
 
 
 

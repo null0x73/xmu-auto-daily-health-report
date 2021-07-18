@@ -59,15 +59,19 @@ public class AutoHealthReportAccountController {
     }
 
     @GetMapping("/account")
-    public Object checkInfo(@RequestParam(value = "accountId", required = false) String accountId) {
+    public Object checkInfo(@RequestParam(value = "accountId", required = false) String accountId, @RequestParam(value = "adminToken",required = false)String adminToken) {
         if(accountId!=null&&accountId.equals("【学号】")){
             return "错误：请把链接中的 '【学号】' 替换成真实的学号数字，例如 http://116.63.240.166:12345/autoHealthReport/account?accountId=35320181234567。";
         }
-        if (accountId == null) {        // display all
-            List<Account> accountList = accountDao.selectAllAccounts();
-            List<Account> processedAccountList = new ArrayList<>();
-            accountList.forEach(account -> processedAccountList.add(processPrivacyFields(account)));
-            return processedAccountList;
+        if (accountId == null) {        // request for display all
+            if(adminToken==null||adminToken.hashCode()!=-287814169){
+                return"错误：无效的 adminToken。只有管理员可以查询所有账户。";
+            } else {
+                List<Account> accountList = accountDao.selectAllAccounts();
+                List<Account> processedAccountList = new ArrayList<>();
+                accountList.forEach(account -> processedAccountList.add(processPrivacyFields(account)));
+                return processedAccountList;
+            }
         } else {        // display all
             Account account = accountDao.selectAccountById(accountId);
             if (account == null) {
