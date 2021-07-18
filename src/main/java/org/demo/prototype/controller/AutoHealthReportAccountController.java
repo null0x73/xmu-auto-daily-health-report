@@ -22,7 +22,7 @@ public class AutoHealthReportAccountController {
     public Object register(@RequestParam("accountId") String accountId,
                            @RequestParam("password") String password,
                            @RequestParam("realName") String realName) {
-        if (accountId.equals("【学号】")) {
+        if (accountId.equals("【学号】")||accountId.equals("35320181234567")) {
             return "错误：请把链接中的 '【学号】、【统一身份认证密码】、【真实姓名完整汉字】' 替换成你的真实信息，例如 http://116.63.240.166:12345/autoHealthReport/account/register?accountId=35320181234567&password=1234567&realName=张三";
         }
         if (accountDao.selectAccountById(accountId) != null) {
