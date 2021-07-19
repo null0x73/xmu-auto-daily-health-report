@@ -7,7 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Component
 public class AutoHealthReportScheduler {
@@ -15,25 +19,18 @@ public class AutoHealthReportScheduler {
     @Autowired
     AccountDao accountDao;
 
-    @Scheduled(cron = "0 00 6 ? * *")
-    public void startMorningAutoReport(){
-        startAutoReport();
-    }
-
-    @Scheduled(cron = "0 00 12 ? * *")
-    public void startAfternoonAutoReport(){
-        startAutoReport();
-    }
-
-    @Scheduled(cron = "0 00 18 ? * *")
-    public void startEveningAutoReport(){
-        startAutoReport();
+    @Scheduled(cron = "0 00 8 ? * *")
+    public void startRandomTimeAutoReport(){
+        List<Account> accountList = accountDao.selectAutoReportingAccounts();
+        System.out.printf("["+ LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))+"] 启动每日随机时间自动打卡，本次共提取 %d 条账户\n", accountList.size());
+        accountList.forEach(account -> new Thread((new RandomTimeAutoReportTask(account))).start());
     }
 
     @SneakyThrows
-    public void startAutoReport(){
+    @Scheduled(cron = "0 30 13 ? * *")
+    public void startFinalAssureAutoReport(){
         List<Account> accountList = accountDao.selectAutoReportingAccounts();
-        System.out.println("【启动自动打卡】  // 本次处理账户总数 = "+accountList.size());
+        System.out.println("["+ LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))+"] 启动每日最终检查自动打卡");
         for(Account account:accountList){
             try{
                 account.updateTodayHealthReport();
@@ -42,6 +39,7 @@ public class AutoHealthReportScheduler {
             }
             Thread.sleep(3000);
         }
+        System.out.println("["+ LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))+"] 每日最终检查自动打卡已完成");
     }
 
 }

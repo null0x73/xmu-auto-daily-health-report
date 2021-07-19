@@ -37,11 +37,9 @@ public class DemoApplication implements ApplicationRunner {
             public void run() {
                 while(true){
                     Thread.sleep(10000);
-                    System.out.printf("=========== [ %s ] ============\n", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
                     // 每 10s 检查一次是否有新注册的未验证账户
                     List<Account> unvalidatedAccountList = accountDao.selectUnvalidatedAccounts();
                     if(unvalidatedAccountList.size()==0){
-                        System.out.println("待验证列表为空，等待 10s 后继续检查");
                     }
                     for(Account unvalidatedAccount:unvalidatedAccountList){
                         boolean validateResult = false;
@@ -52,10 +50,10 @@ public class DemoApplication implements ApplicationRunner {
                         }
                         if(validateResult==true){
                             accountDao.updateAccountStatusToAutoReporting(unvalidatedAccount.getAccountId());
-                            System.out.printf("已验证有效账号 %s 并加入自动报告队列\n", unvalidatedAccount.getAccountId());
+                            System.out.printf("["+LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))+"] 已验证有效账号 %s 并加入自动报告队列\n", unvalidatedAccount.getAccountId());
                         } else {
                             accountDao.deleteAccountById(unvalidatedAccount.getAccountId());
-                            System.out.printf("发现无效账号 %s 并删除\n", unvalidatedAccount.getAccountId());
+                            System.out.printf("["+LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))+"] 账号 %s 未通过一致性验证，已删除\n", unvalidatedAccount.getAccountId());
                         }
                     }
                 }
