@@ -3,6 +3,7 @@ package org.demo.prototype;
 import lombok.SneakyThrows;
 import org.demo.prototype.dao.AccountDao;
 import org.demo.prototype.entity.Account;
+import org.demo.prototype.etc.AutoHealthReportScheduler;
 import org.demo.prototype.util.EnvironmentUtil;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,9 @@ public class DemoApplication implements ApplicationRunner {
     @Autowired
     AccountDao accountDao;
 
+    @Autowired
+    AutoHealthReportScheduler scheduler;
+
     public static void main(String[] args) {
         SpringApplication.run(DemoApplication.class, args);
     }
@@ -31,6 +35,7 @@ public class DemoApplication implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
         System.setProperty("webdriver.chrome.driver", "C:\\dev\\software\\chromedriver\\chromedriver.exe");
+        scheduler.startInstantAutoReport();
         ((new Thread(new Runnable() {
             @SneakyThrows
             @Override

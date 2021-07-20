@@ -20,7 +20,7 @@ public class AutoHealthReportScheduler {
     AccountDao accountDao;
 
     @Scheduled(cron = "0 00 8 ? * *")
-    public void startRandomTimeAutoReport(){
+    public void startRandomDelayAutoReport(){
         List<Account> accountList = accountDao.selectAutoReportingAccounts();
         System.out.printf("["+ LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))+"] 启动每日随机时间自动打卡，本次共提取 %d 条账户\n", accountList.size());
         accountList.forEach(account -> new Thread((new RandomTimeAutoReportTask(account))).start());
@@ -28,7 +28,7 @@ public class AutoHealthReportScheduler {
 
     @SneakyThrows
     @Scheduled(cron = "0 30 13 ? * *")
-    public void startFinalAssureAutoReport(){
+    public void startInstantAutoReport(){
         List<Account> accountList = accountDao.selectAutoReportingAccounts();
         System.out.println("["+ LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))+"] 启动每日最终检查自动打卡");
         for(Account account:accountList){
